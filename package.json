@@ -19,7 +19,6 @@
     "dotenv": "17.2.3",
     "express": "5.1.0",
     "module-alias": "2.2.3",
-    "pg": "8.16.3",
     "prisma": "^6.17.1"
   },
   "devDependencies": {
@@ -28,7 +27,6 @@
   },
   "_moduleAliases": {
     "@config": "src/config",
-    "@api": "src/api",
-    "@services": "src/services"
+    "@api": "src/api"
   }
 }

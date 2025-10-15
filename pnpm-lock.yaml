@@ -23,9 +23,6 @@ importers:
       module-alias:
         specifier: 2.2.3
         version: 2.2.3
-      pg:
-        specifier: 8.16.3
-        version: 8.16.3
       prisma:
         specifier: ^6.17.1
         version: 6.17.1
