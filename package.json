@@ -1,8 +1,12 @@
 {
   "name": "smart-recipe-planner",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
+  "imports": {
+    "#config/*": "./src/config/*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.js",
@@ -18,15 +22,10 @@
     "bcrypt": "^6.0.0",
     "dotenv": "17.2.3",
     "express": "5.1.0",
-    "module-alias": "2.2.3",
     "prisma": "^6.17.1"
   },
   "devDependencies": {
     "node-pg-migrate": "8.0.3",
     "nodemon": "3.1.10"
-  },
-  "_moduleAliases": {
-    "@config": "src/config",
-    "@api": "src/api"
   }
 }
