@@ -14,3 +14,22 @@ export const registerController = async (req, res, next) => {
     next(err);
   }
 };
+
+// Controlador para loguear un usuario
+export const loginController = async (req, res, next) => {
+  const { email, password } = req.body; // Extraemos los datos del cuerpo de la solicitud
+  // Validamos que todos los campos estén presentes
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email y contraseña son requeridos.' });
+  }
+  try {
+    const { loginUserService } = await import('./auth.service.js'); // Importamos el servicio para loguear el usuario
+    const user = await loginUserService(email, password); // Llamamos al servicio para loguear el usuario
+    if (!user) {
+      return res.status(401).json({ error: 'Credenciales inválidas.' });// Si las credenciales son inválidas, respondemos con un error 401
+    }
+    res.status(200).json(user); // Si todo está bien, respondemos con el usuario
+  } catch (err) {
+    next(err);
+  }
+};
