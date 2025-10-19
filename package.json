@@ -7,7 +7,9 @@
   "imports": {
     "#config/*": "./src/config/*",
     "#middlewares/*": "./src/middlewares/*",
-    "#users/*": "./src/api/users/*"
+    "#users/*": "./src/api/users/*",
+    "#recipes/*": "./src/api/recipes/*",
+    "#utils/*": "./src/utils/*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
