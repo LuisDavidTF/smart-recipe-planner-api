@@ -8,6 +8,10 @@ export async function registerUser(data) {
   const salt = await bcrypt.genSalt(10); // Generamos un salt
   data.password_hash = await bcrypt.hash(data.password_hash, salt);// Hasheamos la contraseña
   const user = ((await createUser(data)).id); // Creamos el usuario en la base de datos
+
+  //iniciamos sesión automáticamente al registrar el usuario
+  ///...
+
   return user;// Devolvemos el ID del usuario creado
 }
 
@@ -23,6 +27,5 @@ export async function loginUserService(email, password) {
   }
   //Si la autenticacion es exitosa, retornamos un JWT (JSON Web Token) con Id y rol del usuario
   const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });// Generamos el token JWT
-  //devolvemos solo el token
-  return { token };
+  return { id: user.id, name: user.name, email: user.email, token };// Devolvemos los datos del usuario junto con el token
 }
