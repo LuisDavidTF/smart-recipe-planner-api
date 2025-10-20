@@ -9,6 +9,8 @@ const port = process.env.PORT || 3000;
 
 // Middleware para que Express entienda JSON
 app.use(json());
+app.use(express.json()); // Middleware para parsear bodies JSON
+app.use(express.urlencoded({ extended: true })); // Middleware para parsear bodies urlencoded
 
 // Usamos nuestras rutas de usuario con el prefijo /api/v1/users
 app.use('/api/v1/users', userRoutes);

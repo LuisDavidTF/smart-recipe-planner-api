@@ -6,7 +6,7 @@
  * @param {number} statusCode - El código de estado HTTP (e.g., 400, 404, 401).
  */
 class HttpError extends Error {
-  constructor(message, statusCode) {
+    constructor(message, statusCode) {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
@@ -43,3 +43,5 @@ export class ConflictError extends HttpError {
     super(message, 409);
   }
 }
+
+export { HttpError };
