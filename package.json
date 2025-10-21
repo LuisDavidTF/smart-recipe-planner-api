@@ -11,7 +11,8 @@
     "#recipes/*": "./src/api/recipes/*",
     "#utils/*": "./src/utils/*",
     "#schemas/*": "./src/schemas/*",
-    "#api/*": "./src/api/*"
+    "#api/*": "./src/api/*",
+    "#auth/*": "./src/api/auth/*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

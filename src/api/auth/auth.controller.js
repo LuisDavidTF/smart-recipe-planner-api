@@ -1,4 +1,4 @@
-import { registerUser, loginUserService } from './auth.service.js';
+import { registerUser, loginUserService } from '#auth/auth.service.js';
 import { UnauthorizedError } from '#utils/customErrors.js';
 // Controlador para registrar un nuevo usuario
 export const registerController = async (req, res, next) => {
