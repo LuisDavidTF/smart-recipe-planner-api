@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { UnauthorizedError } from '#utils/customErrors';
+import { UnauthorizedError } from '#utils/customErrors.js';
 
 // Middleware para verificar si el usuario está autenticado
 export const isAuthenticated = (req, res, next) => {

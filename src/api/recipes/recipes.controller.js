@@ -1,4 +1,4 @@
-import { createRecipeService } from "#recipes/recipes.service";
+import { createRecipeService } from "#recipes/recipes.service.js";
 
 // Controlador para crear una nueva receta
 export const createRecipeController = async (req, res, next) => {
