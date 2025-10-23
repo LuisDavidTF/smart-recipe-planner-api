@@ -17,7 +17,7 @@ export const create = async (userId, recipeData) => {
   // se ejecutarán como una única unidad. O todas tienen éxito, o todas fallan.
   // El objeto `tx` es un cliente de Prisma especial, con ámbito a esta transacción.
   const newRecipe = await prisma.$transaction(async (tx) => {
-    
+
     // --- PASO 1: Crear el registro principal de la Receta ---
     // Este es el corazón de la operación. Creamos la receta y la asociamos con el
     // usuario que la está creando (`user_id`). Guardamos el resultado en `createdRecipe`
@@ -94,4 +94,71 @@ export const create = async (userId, recipeData) => {
       media: true, // Incluimos todos los campos de los archivos multimedia
     },
   });
+};
+
+
+
+/**
+ * Busca recetas públicas usando paginación por cursor, ideal para infinite scroll.
+ * @param {number} limit - El número de recetas a devolver.
+ * @param {number} [cursor] - El ID de la última receta vista (opcional, para páginas siguientes).
+ * @returns {Promise<{data: Array<object>, nextCursor: number|null}>} Un objeto con la lista de recetas y el cursor para la siguiente página.
+ */
+export const findPublicRecipes = async (limit, cursor) => {
+
+  // La ventaja de usar paginación basada en cursor es que es más eficiente y escalable para conjuntos de datos grandes,
+  // ya que evita los problemas de rendimiento asociados con la paginación basada en offset.
+
+  const take = limit + 1; // Tomamos un registro extra para determinar si hay más datos disponibles
+
+  // Construimos las opciones de consulta dinámicamente
+  const queryOptions = {
+    where: { visibility: "public" },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      image_url: true,
+      created_at: true
+    },
+    orderBy: [{ created_at: "desc" }, { id: "desc" }], // Ordenamos por fecha de creación descendente y luego por ID para consistencia
+    take: take,
+  };
+  // al tener un orden compuesto, necesitamos el cursor compuesto
+  if (cursor) {
+    // Agregamos la condición para el cursor compuesto
+    queryOptions.where = {
+      ...queryOptions.where,
+      OR: [
+        {
+          // Primero comparamos por createdAt
+          createdAt: { lt: new Date(cursor.createdAt) }
+        },
+        {
+          // Si createdAt es igual, comparamos por ID
+          createdAt: new Date(cursor.createdAt),
+          id: { lt: cursor.id }
+        }
+      ]
+    }
+  }
+  // Realizamos la consulta
+  const recipes = await prisma.recipe.findMany(queryOptions);
+
+  // Determinamos el nextCursor
+  let nextCursor = null;
+  // Si obtuvimos el número máximo de registros, significa que hay más datos disponibles
+  if (recipes.length === take) {
+    const lastRecipe = recipes.pop(); // Removemos el registro extra
+    // Creamos el nextCursor compuesto
+    nextCursor = {
+      createdAt: lastRecipe.created_at.toISOString(),
+      id: lastRecipe.id,
+    };
+  }
+  // Devolvemos los datos y el nextCursor
+  return {
+    data: recipes,
+    nextCursor: nextCursor,
+  }
 };
