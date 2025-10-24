@@ -44,3 +44,9 @@ export const findPublicRecipesSchema = z.object({
     cursorId: z.coerce.number().int().positive().optional(),
     cursorDate: z.string().datetime().optional() // Valida que sea una fecha en formato ISO
 });
+
+export const findRecipeByIdSchema = z.object({
+    recipeId: z.coerce.number({
+        invalid_type_error: "El ID de la receta debe ser un número."
+    }).int().positive({ message: "El ID de la receta debe ser un número positivo." })
+});
