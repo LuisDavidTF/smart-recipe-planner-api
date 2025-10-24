@@ -9,7 +9,7 @@ export const createRecipeSchema = z.object({
     visibility: z.enum(['public', 'private']).optional().default('private'),
 
     instructions: z.record(z.string(), z.string(), { required_error: 'Las instrucciones son requeridas.' }),
- 
+
     ingredients: z.array(z.object({
         name: z.string({ required_error: 'El nombre del ingrediente es obligatorio.' }).nonempty('El nombre del ingrediente no puede estar vacío.'),
         quantity: z.coerce.number({ invalid_type_error: 'La cantidad debe ser un número.' }).positive({ message: 'La cantidad debe ser un número positivo.' }).optional(),
@@ -24,6 +24,20 @@ export const createRecipeSchema = z.object({
 });
 
 export const findPublicRecipesSchema = z.object({
-    limit: z.string().optional(), // Lo recibimos como string en la query
-    cursor: z.string().optional() // Lo recibimos como string en la query
+    // Para `limit`:
+    // 1. `z.coerce.number()`: Le dice a Zod que intente convertir el string a un número.
+    // 2. `.int().positive()`: Asegura que sea un entero positivo.
+    // 3. `.default(10)`: Si no se proporciona, asigna un valor por defecto de 10.
+    limit: z.coerce.number({
+        invalid_type_error: "El límite debe ser un número."
+    }).int().positive().default(10),
+
+    // Para `cursor`:
+    // Usamos `z.preprocess` para manejar la transformación del JSON de forma segura.
+    // 1. El primer argumento es una función que se ejecuta ANTES de la validación.
+    //    Intenta parsear el string. Si falla, devuelve un valor inválido que Zod atrapará.
+    // 2. El segundo argumento es el schema que se aplica DESPUÉS de la transformación.
+    //    Ahora validamos que el resultado sea un objeto con los campos correctos.
+    cursorId: z.coerce.number().int().positive().optional(),
+    cursorDate: z.string().datetime().optional() // Valida que sea una fecha en formato ISO
 });
