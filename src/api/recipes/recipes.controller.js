@@ -21,9 +21,15 @@ export const createRecipeController = async (req, res, next) => {
 // Controlador para buscar recetas públicas con paginación por cursor
 export const findPublicRecipesController = async (req, res, next) => {
     try {
-        const limit = parseInt(req.query.limit, 10) || 10; // Número de recetas a devolver, por defecto 10
-        const cursorParam = req.query.cursor ? JSON.parse(req.query.cursor) : null; // Cursor para la paginación
-        const { data, nextCursor } = await findPublicRecipesService(limit, cursorParam);
+        const { limit, cursorId, cursorDate } = req.validatedData;
+
+        // Construimos el cursor solo si los parámetros existen
+        let cursor = undefined;
+        if (cursorId && cursorDate) {
+            cursor = { id: cursorId, createdAt: cursorDate };
+        }
+
+        const { data, nextCursor } = await findPublicRecipesService(limit, cursor);
 
         res.status(200).json({
             data: data,

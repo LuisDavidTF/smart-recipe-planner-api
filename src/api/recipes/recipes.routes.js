@@ -16,7 +16,7 @@ router.post(
 // GET /api/v1/recipes/public - Ruta para buscar recetas públicas con paginación por cursor
 router.get(
   "/public",
-  validateSchema(findPublicRecipesSchema),
+  validateSchema(findPublicRecipesSchema, 'query'),
   findPublicRecipesController
 );
 export default router;
