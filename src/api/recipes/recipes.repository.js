@@ -83,17 +83,8 @@ export const create = async (userId, recipeData) => {
   // también la lista de ingredientes y multimedia que acabamos de crear.
   // Por lo tanto, hacemos una consulta final para buscar la receta por su ID y usamos `include`
   // para cargar ("hidratar") esas relaciones.
-  return prisma.recipe.findUnique({
-    where: { id: newRecipe.id },
-    include: {
-      ingredients: {
-        include: {
-          ingredient: true, // Incluimos los detalles del ingrediente (ej. su nombre)
-        },
-      },
-      media: true, // Incluimos todos los campos de los archivos multimedia
-    },
-  });
+  
+  return findById(newRecipe.id);
 };
 
 
@@ -162,3 +153,23 @@ export const findPublicRecipes = async (limit, cursor) => {
     nextCursor: nextCursor,
   }
 };
+
+
+/** * Obtiene una receta por su ID, incluyendo ingredientes y multimedia relacionados. * 
+ * @param {number} recipeId - El ID de la receta a buscar. * 
+ * @returns {Promise<object|null>} La receta encontrada con sus relaciones, o null si no existe. 
+ * */
+
+export const findById = async (recipeId) => {
+  return prisma.recipe.findUnique({
+    where: { id: recipeId },
+    include: {
+      ingredients: {
+        include: {
+          ingredient: true, // Incluimos los detalles del ingrediente (ej. su nombre)
+        },
+      },
+      media: true, // Incluimos todos los campos de los archivos multimedia
+    },
+  });
+}
