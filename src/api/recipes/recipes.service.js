@@ -19,9 +19,17 @@ export const createRecipeService = async (userId, recipeData) => {
  * @param {number} [cursor] - El ID de la última receta vista (opcional, para páginas siguientes).
  * @returns {Promise<{data: Array<object>, nextCursor: number|null}>} Un objeto con la lista de recetas y el cursor para la siguiente página.
  */
-export const findPublicRecipesService = async (limit, cursor) => {
-  const recipes = await recipesRepository.findPublicRecipes(limit, cursor);
-  return recipes;
-};
+// El servicio ahora recibe el objeto completo de datos validados.
+export const findPublicRecipesService = async (validatedQuery) => {
+  const { limit, cursorId, cursorDate } = validatedQuery;
 
+  let cursor = undefined;
+  if (cursorId && cursorDate) {
+    cursor = { id: cursorId, createdAt: new Date(cursorDate) };
+  }
+
+  const recipesPage = await recipesRepository.findPublicRecipes(limit, cursor);
+
+  return recipesPage;
+};
 
