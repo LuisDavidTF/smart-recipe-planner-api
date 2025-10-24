@@ -119,9 +119,9 @@ export const findPublicRecipes = async (limit, cursor) => {
       name: true,
       description: true,
       image_url: true,
-      created_at: true
+      createdAt: true
     },
-    orderBy: [{ created_at: "desc" }, { id: "desc" }], // Ordenamos por fecha de creación descendente y luego por ID para consistencia
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }], // Ordenamos por fecha de creación descendente y luego por ID para consistencia
     take: take,
   };
   // al tener un orden compuesto, necesitamos el cursor compuesto
@@ -152,7 +152,7 @@ export const findPublicRecipes = async (limit, cursor) => {
     const lastRecipe = recipes.pop(); // Removemos el registro extra
     // Creamos el nextCursor compuesto
     nextCursor = {
-      createdAt: lastRecipe.created_at.toISOString(),
+      createdAt: lastRecipe.createdAt.toISOString(),
       id: lastRecipe.id,
     };
   }
