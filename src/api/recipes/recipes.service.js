@@ -12,3 +12,16 @@ export const createRecipeService = async (userId, recipeData) => {
 
   return newRecipe;
 };
+
+/**
+ * Busca recetas públicas usando paginación por cursor, ideal para infinite scroll.
+ * @param {number} limit - El número de recetas a devolver.
+ * @param {number} [cursor] - El ID de la última receta vista (opcional, para páginas siguientes).
+ * @returns {Promise<{data: Array<object>, nextCursor: number|null}>} Un objeto con la lista de recetas y el cursor para la siguiente página.
+ */
+export const findPublicRecipesService = async (limit, cursor) => {
+  const recipes = await recipesRepository.findPublicRecipes(limit, cursor);
+  return recipes;
+};
+
+

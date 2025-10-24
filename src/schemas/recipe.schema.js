@@ -22,3 +22,8 @@ export const createRecipeSchema = z.object({
         display_order: z.number().int()
     })).optional()
 });
+
+export const findPublicRecipesSchema = z.object({
+    limit: z.string().optional(), // Lo recibimos como string en la query
+    cursor: z.string().optional() // Lo recibimos como string en la query
+});

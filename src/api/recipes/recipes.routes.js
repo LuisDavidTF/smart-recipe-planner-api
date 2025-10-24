@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { createRecipeController } from "#recipes/recipes.controller.js";
+import { createRecipeController, findPublicRecipesController} from "#recipes/recipes.controller.js";
 import { isAuthenticated } from "#middlewares/isAutenticated.js";
 import { validateSchema } from "#middlewares/validateSchema.js";
-import { createRecipeSchema } from "#schemas/recipe.schema.js";
+import { createRecipeSchema, findPublicRecipesSchema} from "#schemas/recipe.schema.js";
 
 const router = Router();
 // POST /api/v1/recipes - Ruta para crear una nueva receta
@@ -13,4 +13,10 @@ router.post(
   createRecipeController
 );
 
+// GET /api/v1/recipes/public - Ruta para buscar recetas públicas con paginación por cursor
+router.get(
+  "/public",
+  validateSchema(findPublicRecipesSchema),
+  findPublicRecipesController
+);
 export default router;
