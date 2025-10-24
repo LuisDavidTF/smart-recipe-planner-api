@@ -30,7 +30,10 @@ export const findPublicRecipesSchema = z.object({
     // 3. `.default(10)`: Si no se proporciona, asigna un valor por defecto de 10.
     limit: z.coerce.number({
         invalid_type_error: "El límite debe ser un número."
-    }).int().positive().default(10),
+    }).int()
+        .positive()
+        .max(50, { message: "El límite no puede ser mayor a 50." })
+        .default(10),
 
     // Para `cursor`:
     // Usamos `z.preprocess` para manejar la transformación del JSON de forma segura.
