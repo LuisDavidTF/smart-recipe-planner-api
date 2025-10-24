@@ -33,3 +33,12 @@ export const findPublicRecipesService = async (validatedQuery) => {
   return recipesPage;
 };
 
+/** *Busca una receta por su ID, incluyendo detalles según la visibilidad y el usuario.
+ * @param {number} recipeId - El ID de la receta a buscar.
+ * @param {number|null} userId - El ID del usuario que realiza la solicitud (puede ser null para usuarios no autenticados).
+ * @returns {Promise<object|null>} La receta encontrada, o null si no existe.
+ */
+export const findRecipeByIdService = async (recipeId, userId) => {
+  const recipe = await recipesRepository.findById(recipeId, userId);
+  return recipe;
+};
