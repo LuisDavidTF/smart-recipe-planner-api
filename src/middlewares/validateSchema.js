@@ -29,7 +29,7 @@ export const validateSchema = (schema, source = 'body') => (req, res, next) => {
         // Verificamos si el error es una instancia de ZodError.
         if (error instanceof ZodError) {
             // Si es un error de Zod, lo formateamos y lo pasamos a nuestro errorHandler.
-            const formattedErrors = error.errors.map(err => err.message);
+            const formattedErrors = error.issues.map(err => err.message);
             const validationError = new BadRequestError(formattedErrors.join(', '));
             return next(validationError);
         }
