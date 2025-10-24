@@ -83,8 +83,24 @@ export const create = async (userId, recipeData) => {
   // también la lista de ingredientes y multimedia que acabamos de crear.
   // Por lo tanto, hacemos una consulta final para buscar la receta por su ID y usamos `include`
   // para cargar ("hidratar") esas relaciones.
-  
-  return findById(newRecipe.id);
+
+  return prisma.recipe.findUnique({
+    where: { id: newRecipe.id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      ingredients: {
+        include: {
+          ingredient: true, // Incluimos los detalles del ingrediente (ej. su nombre)
+        },
+      },
+      media: true, // Incluimos todos los campos de los archivos multimedia
+    },
+  });
 };
 
 
@@ -155,15 +171,33 @@ export const findPublicRecipes = async (limit, cursor) => {
 };
 
 
-/** * Obtiene una receta por su ID, incluyendo ingredientes y multimedia relacionados. * 
+/** 
+ * Obtiene una receta por su ID, incluyendo ingredientes y multimedia relacionados. *
+ * También valida que la receta sea pública o que pertenezca al usuario autenticado. *
  * @param {number} recipeId - El ID de la receta a buscar. * 
+ * @param {number} [userId] - El ID del usuario autenticado (opcional). *
  * @returns {Promise<object|null>} La receta encontrada con sus relaciones, o null si no existe. 
  * */
 
-export const findById = async (recipeId) => {
-  return prisma.recipe.findUnique({
-    where: { id: recipeId },
+export const findById = async (recipeId, userId) => {
+  const whereConditions = {
+    id: recipeId,
+    OR: [{ visibility: "public" }],
+  };
+
+  if (userId) {
+    whereConditions.OR.push({ user_id: userId });
+  }
+
+  return prisma.recipe.findFirst({
+    where: whereConditions,
     include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       ingredients: {
         include: {
           ingredient: true, // Incluimos los detalles del ingrediente (ej. su nombre)
