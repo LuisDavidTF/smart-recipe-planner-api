@@ -56,9 +56,11 @@ export const findRecipeByIdController = async (req, res, next) => {
  */
 export const updateRecipeByIdController = async (req, res, next) => {
     try {
-        // Gracias al middleware `validateSchema` que fusiona params y body,
-        // `req.validatedData` ahora contiene tanto `recipeId` como los datos del body.
-        const { recipeId, ...updateData } = req.validatedData;
+        // Obtenemos el ID de la receta desde los parámetros validados.
+        const { recipeId } = req.validated.params;
+        // Obtenemos los datos de actualización desde el cuerpo validados.
+        const updateData = req.validated.body;
+        // Obtenemos el ID del usuario autenticado.
         const userId = req.user.id;
 
         const updatedRecipe = await updateRecipeByIdService(userId, recipeId, updateData);
