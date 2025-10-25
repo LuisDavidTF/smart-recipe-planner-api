@@ -299,13 +299,24 @@ export const updateById = async (userId, recipeId, updateData) => {
 export const deleteById = async (userId, recipeId) => {
   // `prisma.recipe.delete` es una única operación atómica.
   // Combina la búsqueda, la autorización y la eliminación en un solo paso.
-  const deletedRecipe = await prisma.recipe.delete({
-    //Si no encuentra una receta con este ID Y que le pertenezca a este usuario, 
-    // lanzará un error.
-    where: {
-      id: recipeId,
-      user_id: userId,
-    },
+  
+  return prisma.$transaction(async (tx) => {
+    // Primero, eliminamos las relaciones en tablas intermedias para mantener la integridad referencial.
+    await tx.recipeIngredient.deleteMany({
+      where: { recipe_id: recipeId },
+    });
+    await tx.recipeMedia.deleteMany({
+      where: { recipe_id: recipeId },
+    });
+
+    // Ahora, eliminamos la receta principal.
+    // Si no encuentra una receta con este ID Y que le pertenezca a este usuario, devuelve un error.
+    const deletedRecipe = await tx.recipe.delete({
+      where: {
+        id: recipeId,
+        user_id: userId,
+      },
+    });
+    return deletedRecipe;
   });
-  return deletedRecipe;
 };
