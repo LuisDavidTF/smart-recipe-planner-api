@@ -42,3 +42,19 @@ export const findRecipeByIdService = async (recipeId, userId) => {
   const recipe = await recipesRepository.findById(recipeId, userId);
   return recipe;
 };
+
+/**
+ * Actualiza una receta existente, asegurando que el usuario tenga permiso para hacerlo.
+ * @param {number} userId - El ID del usuario que está actualizando la receta.
+ * @param {number} recipeId - El ID de la receta a actualizar.
+ * @param {object} updateData - Los datos validados para actualizar la receta.
+ * @returns {Promise<object>} La receta actualizada.
+ */
+export const updateRecipeByIdService = async (userId, recipeId, updateData) => {
+  const updatedRecipe = await recipesRepository.updateById(
+    userId,
+    recipeId,
+    updateData
+  );
+  return updatedRecipe;
+};
