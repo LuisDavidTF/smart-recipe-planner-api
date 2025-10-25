@@ -214,8 +214,6 @@ export const findById = async (recipeId, userId) => {
  * @param {number} userId - El ID del usuario que está actualizando la receta.
  * @param {number} recipeId - El ID de la receta a actualizar.
  * @param {object} updateData - Los datos validados para actualizar la receta.
- * @param {Array} [updateData.ingredients] - Lista de ingredientes para la receta.  (Opcional)
- * @param {Array} [updateData.media] - Lista de archivos multimedia para la receta. (Opcional)
  * @returns {Promise<object>} La receta actualizada con todas sus relaciones.
  * @throws {Prisma.PrismaClientKnownRequestError} Si la receta no se encuentra o el usuario no tiene permiso.
  */
