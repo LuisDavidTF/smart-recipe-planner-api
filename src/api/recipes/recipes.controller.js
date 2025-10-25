@@ -1,4 +1,4 @@
-import { createRecipeService, findPublicRecipesService, findRecipeByIdService } from "#recipes/recipes.service.js";
+import { createRecipeService, findPublicRecipesService, findRecipeByIdService, updateRecipeByIdService } from "#recipes/recipes.service.js";
 
 // Controlador para crear una nueva receta
 export const createRecipeController = async (req, res, next) => {
@@ -48,3 +48,25 @@ export const findRecipeByIdController = async (req, res, next) => {
         next(error);
     }
 }
+
+/** Controlador para actualizar una receta existente.
+ * @param {object} req - El objeto de la solicitud.
+ * @param {object} res - El objeto de la respuesta.
+ * @param {function} next - La función para pasar al siguiente middleware.
+ */
+export const updateRecipeByIdController = async (req, res, next) => {
+    try {
+        // Gracias al middleware `validateSchema` que fusiona params y body,
+        // `req.validatedData` ahora contiene tanto `recipeId` como los datos del body.
+        const { recipeId, ...updateData } = req.validatedData;
+        const userId = req.user.id;
+
+        const updatedRecipe = await updateRecipeByIdService(userId, recipeId, updateData);
+        res.status(200).json({
+            message: 'Receta actualizada exitosamente',
+            recipe: updatedRecipe
+        });
+    } catch (error) {
+        next(error);
+    }
+};

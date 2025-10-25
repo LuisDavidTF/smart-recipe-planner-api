@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { createRecipeController, findPublicRecipesController, findRecipeByIdController } from "#recipes/recipes.controller.js";
+import { createRecipeController, findPublicRecipesController, findRecipeByIdController, updateRecipeByIdController } from "#recipes/recipes.controller.js";
 import { isAuthenticated, authenticateOptional } from "#middlewares/authentication.js";
 import { validateSchema } from "#middlewares/validateSchema.js";
-import { createRecipeSchema, findPublicRecipesSchema, findRecipeByIdSchema } from "#schemas/recipe.schema.js";
+import { createRecipeSchema, findPublicRecipesSchema, recipeIdParamSchema, updateRecipeByIdSchema} from "#schemas/recipe.schema.js";
 
 const router = Router();
 // POST /api/v1/recipes - Ruta para crear una nueva receta
@@ -24,8 +24,18 @@ router.get(
 router.get(
   "/:recipeId",
   authenticateOptional,
-  validateSchema(findRecipeByIdSchema, 'params'),
+  validateSchema(recipeIdParamSchema, 'params'),
   findRecipeByIdController
 );
+
+// Patch /api/v1/recipes/:recipeId - Ruta para actualizar una receta por su ID
+router.patch(
+  "/:recipeId",
+  isAuthenticated,
+  validateSchema(recipeIdParamSchema, 'params'),
+  validateSchema(updateRecipeByIdSchema),
+  updateRecipeByIdController
+);
+
 
 export default router;
