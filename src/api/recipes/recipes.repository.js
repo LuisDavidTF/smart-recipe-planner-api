@@ -270,10 +270,18 @@ export const updateById = async (userId, recipeId, updateData) => {
     },
     // Incluimos las relaciones actualizadas en la respuesta final.
     include: {
-      ingredients: { include: { ingredient: true } },
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      ingredients: { 
+        include: { ingredient: true 
+        } 
+      },
       media: true,
     },
   });
-
   return updatedRecipe;
 };
