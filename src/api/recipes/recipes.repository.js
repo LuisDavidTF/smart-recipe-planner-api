@@ -289,3 +289,23 @@ export const updateById = async (userId, recipeId, updateData) => {
   });
   return updatedRecipe;
 };
+
+/** Elimina una receta por su ID, asegurando que solo el propietario pueda hacerlo.
+ * @param {number} userId - El ID del usuario que está eliminando la receta.
+ * @param {number} recipeId - El ID de la receta a eliminar.
+ * @returns {Promise<object>} La receta eliminada.
+  * @throws {Prisma.PrismaClientKnownRequestError} Si la receta no se encuentra o el usuario no tiene permiso.
+ */
+export const deleteById = async (userId, recipeId) => {
+  // `prisma.recipe.delete` es una única operación atómica.
+  // Combina la búsqueda, la autorización y la eliminación en un solo paso.
+  const deletedRecipe = await prisma.recipe.delete({
+    //Si no encuentra una receta con este ID Y que le pertenezca a este usuario, 
+    // lanzará un error.
+    where: {
+      id: recipeId,
+      user_id: userId,
+    },
+  });
+  return deletedRecipe;
+};
