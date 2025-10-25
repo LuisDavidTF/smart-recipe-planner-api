@@ -207,3 +207,75 @@ export const findById = async (recipeId, userId) => {
     },
   });
 }
+
+/**
+ * Actualiza una receta existente por su ID usando escrituras anidadas de Prisma para máxima eficiencia.
+ * La cláusula 'where' garantiza que solo el propietario de la receta pueda actualizarla.
+ * @param {number} userId - El ID del usuario que está actualizando la receta.
+ * @param {number} recipeId - El ID de la receta a actualizar.
+ * @param {object} updateData - Los datos validados para actualizar la receta.
+ * @param {Array} [updateData.ingredients] - Lista de ingredientes para la receta.  (Opcional)
+ * @param {Array} [updateData.media] - Lista de archivos multimedia para la receta. (Opcional)
+ * @returns {Promise<object>} La receta actualizada con todas sus relaciones.
+ * @throws {Prisma.PrismaClientKnownRequestError} Si la receta no se encuentra o el usuario no tiene permiso.
+ */
+export const updateById = async (userId, recipeId, updateData) => {
+  const { ingredients, media, ...mainRecipeData } = updateData;
+
+  // `prisma.recipe.update` es una única operación atómica.
+  // Combina la búsqueda, la autorización y la actualización en un solo paso.
+  const updatedRecipe = await prisma.recipe.update({
+    //Si no encuentra una receta con este ID Y que le pertenezca a este usuario, 
+    // lanzará un error.
+    where: {
+      id: recipeId,
+      user_id: userId,
+    },
+    // En 'data' especificamos qué campos de la receta principal se actualizan
+    // y cómo deben cambiar sus relaciones.
+    data: {
+      ...mainRecipeData, // Actualiza campos como name, description, etc.
+
+      // --- Manejo de Ingredientes ---
+      // Solo si el arreglo 'ingredients' fue incluido en la peticion...
+      ...(ingredients && {
+        ingredients: {
+          // 1. Borramos todos los ingredientes existentes asociados a esta receta.
+          deleteMany: {},
+          // 2. Creamos los nuevos registros en la tabla intermedia.
+          create: ingredients.map(ingredient => ({
+            quantity: ingredient.quantity,
+            unit_of_measure: ingredient.unit_of_measure,
+            // Anidamos un 'upsert' para el ingrediente en sí.
+            ingredient: {
+              connectOrCreate: {
+                where: { name: ingredient.name.toLowerCase() },
+                create: { name: ingredient.name.toLowerCase() },
+              },
+            },
+          })),
+        },
+      }),
+
+      // --- Manejo de Multimedia ---
+      // Solo si el arreglo 'media' fue incluido en la peticion...
+      ...(media && {
+        media: {
+          // Usamos 'set' como un atajo para "borrar todo lo anterior y establecer esta nueva lista".
+          set: media.map(item => ({
+            url: item.url,
+            media_type: item.media_type,
+            display_order: item.display_order,
+          })),
+        },
+      }),
+    },
+    // Incluimos las relaciones actualizadas en la respuesta final.
+    include: {
+      ingredients: { include: { ingredient: true } },
+      media: true,
+    },
+  });
+
+  return updatedRecipe;
+};
