@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createRecipeController, findPublicRecipesController, findRecipeByIdController, updateRecipeByIdController } from "#recipes/recipes.controller.js";
+import { createRecipeController, findPublicRecipesController, findRecipeByIdController, updateRecipeByIdController, deleteRecipeByIdController } from "#recipes/recipes.controller.js";
 import { isAuthenticated, authenticateOptional } from "#middlewares/authentication.js";
 import { validateSchema } from "#middlewares/validateSchema.js";
 import { createRecipeSchema, findPublicRecipesSchema, recipeIdParamSchema, updateRecipeByIdSchema} from "#schemas/recipe.schema.js";
@@ -35,6 +35,14 @@ router.patch(
   validateSchema(recipeIdParamSchema, 'params'),
   validateSchema(updateRecipeByIdSchema),
   updateRecipeByIdController
+);
+
+// DELETE /api/v1/recipes/:recipeId - Ruta para eliminar una receta por su ID
+router.delete(
+  "/:recipeId",
+  isAuthenticated,
+  validateSchema(recipeIdParamSchema, 'params'),
+  deleteRecipeByIdController
 );
 
 
