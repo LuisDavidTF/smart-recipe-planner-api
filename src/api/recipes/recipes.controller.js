@@ -1,4 +1,4 @@
-import { createRecipeService, findPublicRecipesService, findRecipeByIdService, updateRecipeByIdService } from "#recipes/recipes.service.js";
+import { createRecipeService, findPublicRecipesService, findRecipeByIdService, updateRecipeByIdService, deleteRecipeByIdService } from "#recipes/recipes.service.js";
 
 // Controlador para crear una nueva receta
 export const createRecipeController = async (req, res, next) => {
@@ -66,6 +66,28 @@ export const updateRecipeByIdController = async (req, res, next) => {
         res.status(200).json({
             message: 'Receta actualizada exitosamente',
             recipe: updatedRecipe
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/** Controlador para eliminar una receta existente.
+ * @param {object} req - El objeto de la solicitud.
+ * @param {object} res - El objeto de la respuesta.
+ * @param {function} next - La función para pasar al siguiente middleware.
+ */
+
+export const deleteRecipeByIdController = async (req, res, next) => {
+    try {
+        // Obtenemos el ID de la receta desde los parámetros validados.
+        const { recipeId } = req.validated.params;
+        // Obtenemos el ID del usuario autenticado.
+        const userId = req.user.id;
+        // Llamamos al servicio para eliminar la receta.
+        await deleteRecipeByIdService(userId, recipeId);
+        res.status(200).json({
+            message: 'Receta eliminada exitosamente'
         });
     } catch (error) {
         next(error);
