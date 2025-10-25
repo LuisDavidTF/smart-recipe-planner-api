@@ -22,7 +22,10 @@ export const validateSchema = (schema, source = 'body') => (req, res, next) => {
 
         // Creamos una nueva propiedad para almacenar los datos validados.
         // Esto asegura que el controlador reciba datos seguros y predecibles.
-        req.validatedData = validatedData;
+        // Usamos Object.assign para fusionar los datos validados en lugar de sobrescribirlos.
+        // Esto es útil cuando se encadenan múltiples validaciones (ej. params y body).
+        req.validatedData = Object.assign(req.validatedData || {}, validatedData);
+
 
         next();
     } catch (error) {
