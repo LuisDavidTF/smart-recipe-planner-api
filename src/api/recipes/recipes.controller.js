@@ -3,9 +3,9 @@ import { createRecipeService, findPublicRecipesService, findRecipeByIdService, u
 // Controlador para crear una nueva receta
 export const createRecipeController = async (req, res, next) => {
     try {
-        const recipeData = req.body;
+        const recipeData = req.validated.body;
 
-        const userId = req.user.id; // Suponiendo que el ID del usuario está disponible en req.user
+        const userId = req.user.id; 
 
         const newRecipe = await createRecipeService(userId, recipeData);
 
@@ -22,7 +22,7 @@ export const createRecipeController = async (req, res, next) => {
 export const findPublicRecipesController = async (req, res, next) => {
     try {
         // Simplemente pasamos los datos validados directamente al servicio.
-        const results = await findPublicRecipesService(req.validatedData);
+        const results = await findPublicRecipesService(req.validated.query);
 
         res.status(200).json(results);
     } catch (error) {
@@ -37,7 +37,7 @@ export const findPublicRecipesController = async (req, res, next) => {
  */
 export const findRecipeByIdController = async (req, res, next) => {
     try {
-        const { recipeId } = req.validatedData;
+        const { recipeId } = req.validated.params;
         const userId = req.user ? req.user.id : null;
         const recipe = await findRecipeByIdService(recipeId, userId);
         if (!recipe) {
@@ -62,7 +62,6 @@ export const updateRecipeByIdController = async (req, res, next) => {
         const updateData = req.validated.body;
         // Obtenemos el ID del usuario autenticado.
         const userId = req.user.id;
-
         const updatedRecipe = await updateRecipeByIdService(userId, recipeId, updateData);
         res.status(200).json({
             message: 'Receta actualizada exitosamente',
