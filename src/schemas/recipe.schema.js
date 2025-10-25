@@ -45,8 +45,13 @@ export const findPublicRecipesSchema = z.object({
     cursorDate: z.string().datetime().optional() // Valida que sea una fecha en formato ISO
 });
 
-export const findRecipeByIdSchema = z.object({
+export const recipeIdParamSchema = z.object({
     recipeId: z.coerce.number({
         invalid_type_error: "El ID de la receta debe ser un número."
     }).int().positive({ message: "El ID de la receta debe ser un número positivo." })
 });
+
+
+// Para las actualizaciones, todos los campos son opcionales pero deben seguir las mismas reglas si se proporcionan.
+// Usamos `.partial()` para hacer que todos los campos sean opcionales.
+export const updateRecipeByIdSchema = createRecipeSchema.partial();
