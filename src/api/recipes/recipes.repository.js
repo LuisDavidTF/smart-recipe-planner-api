@@ -1,10 +1,14 @@
 import prisma from "#config/prisma.js";
+/**
+ * @typedef {import('@prisma/client').Prisma.RecipeCreateInput} RecipeCreateInput
+ * @typedef {import('@prisma/client').Prisma.RecipeUpdateInput} RecipeUpdateInput
+ */
 
 /**
  * Crea una nueva receta con todas sus relaciones (ingredientes, multimedia) dentro de una única transacción de base de datos.
  * Este enfoque de "todo o nada" garantiza la integridad de los datos; si algún paso falla, toda la operación se revierte (rollback).
  * @param {number} userId - El ID del usuario que está creando la receta.
- * @param {object} recipeData - Los datos validados para la nueva receta, estructurados según el schema de Zod.
+ * @param {RecipeCreateInput & { ingredients: any[], media: any[] }} recipeData - Los datos validados para la nueva receta, estructurados según el schema de Zod.
  * @returns {Promise<object>} La receta recién creada, completamente poblada con sus ingredientes y multimedia relacionados.
  */
 export const create = async (userId, recipeData) => {
@@ -108,7 +112,7 @@ export const create = async (userId, recipeData) => {
 /**
  * Busca recetas públicas usando paginación por cursor, ideal para infinite scroll.
  * @param {number} limit - El número de recetas a devolver.
- * @param {number} [cursor] - El ID de la última receta vista (opcional, para páginas siguientes).
+ * @param {{createdAt: string, id: number}} [cursor] - El cursor de la última receta vista (opcional, para páginas siguientes).
  * @returns {Promise<{data: Array<object>, nextCursor: number|null}>} Un objeto con la lista de recetas y el cursor para la siguiente página.
  */
 export const findPublicRecipes = async (limit, cursor) => {
@@ -213,7 +217,7 @@ export const findById = async (recipeId, userId) => {
  * La cláusula 'where' garantiza que solo el propietario de la receta pueda actualizarla.
  * @param {number} userId - El ID del usuario que está actualizando la receta.
  * @param {number} recipeId - El ID de la receta a actualizar.
- * @param {object} updateData - Los datos validados para actualizar la receta.
+ * @param {RecipeUpdateInput & { ingredients?: any[], media?: any[] }} updateData - Los datos validados para actualizar la receta.
  * @returns {Promise<object>} La receta actualizada con todas sus relaciones.
  * @throws {Prisma.PrismaClientKnownRequestError} Si la receta no se encuentra o el usuario no tiene permiso.
  */
