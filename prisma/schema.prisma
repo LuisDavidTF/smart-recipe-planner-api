@@ -56,10 +56,11 @@ model Recipe {
   media       RecipeMedia[]      // <-- AÑADIDO: Relación inversa
   ingredients RecipeIngredient[] // <-- AÑADIDO: Relación inversa
 
+  @@index([createdAt, id]) // <-- CORREGIDO: Se usa el nombre del campo del modelo, no el de la columna
   @@map("recipes")
 }
 
-enum IngredientMediaType {
+enum RecipeMediaType {
   image
   video
 }
@@ -69,7 +70,7 @@ model RecipeMedia {
   recipe_id     Int
   recipe        Recipe              @relation(fields: [recipe_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
   url           String
-  media_type    IngredientMediaType
+  media_type    RecipeMediaType
   display_order Int
   createdAt     DateTime            @default(now()) @map("created_at")
 
@@ -78,7 +79,7 @@ model RecipeMedia {
 
 model Ingredient {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -93,7 +94,7 @@ model RecipeIngredient {
   recipe          Recipe   @relation(fields: [recipe_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
   ingredient_id   Int
   ingredient      Ingredient @relation(fields: [ingredient_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
-  quantity        Decimal? @db.Decimal(3, 2)
+  quantity        Decimal? @db.Decimal(10,2)
   unit_of_measure String
   createdAt       DateTime @default(now()) @map("created_at")
 

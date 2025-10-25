@@ -1,5 +1,7 @@
 import express, { json } from 'express';
-import userRoutes from './api/auth/auth.routes.js'; // Importamos nuestras rutas de usuario
+import { jsonSyntaxErrorHandler } from '#middlewares/jsonSyntaxErrorHandler.js'; // Importamos el middleware para manejar errores de sintaxis JSON
+import userRoutes from '#api/auth/auth.routes.js'; // Importamos nuestras rutas de usuario
+import recipeRoutes from '#api/recipes/recipes.routes.js'; // Importamos nuestras rutas de recetas
 import errorHandler from '#middlewares/errorHandler.js';// Importamos el middleware de manejo de errores
 
 // Creamos la aplicación de Express
@@ -14,6 +16,10 @@ app.use(express.urlencoded({ extended: true })); // Middleware para parsear bodi
 
 // Usamos nuestras rutas de usuario con el prefijo /api/v1/users
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/recipes', recipeRoutes); // Usamos nuestras rutas de recetas con el prefijo /api/v1/recipes
+
+// Middleware para manejar errores de sintaxis JSON
+app.use(jsonSyntaxErrorHandler);
 
 // Middleware para manejar errores
 app.use(errorHandler);

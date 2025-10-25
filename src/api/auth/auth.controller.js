@@ -1,8 +1,8 @@
-import { registerUser, loginUserService } from './auth.service.js';
+import { registerUser, loginUserService } from '#auth/auth.service.js';
 import { UnauthorizedError } from '#utils/customErrors.js';
 // Controlador para registrar un nuevo usuario
 export const registerController = async (req, res, next) => {
-  const { name, email, password } = req.body; // Extraemos los datos del cuerpo de la solicitud
+  const { name, email, password } = req.validated.body; // Extraemos los datos del cuerpo de la solicitud
   
   // No necesitamos validar aquí porque el middleware de validación ya lo hizo
 
@@ -17,7 +17,7 @@ export const registerController = async (req, res, next) => {
 
 // Controlador para loguear un usuario
 export const loginController = async (req, res, next) => {
-  const { email, password } = req.body; // Extraemos los datos del cuerpo de la solicitud
+  const { email, password } = req.validated.body; // Extraemos los datos del cuerpo de la solicitud
   
   // No necesitamos validar aquí porque el middleware de validación ya lo hizo
 
