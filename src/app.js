@@ -10,25 +10,35 @@ import errorHandler from '#middlewares/errorHandler.js';// Importamos el middlew
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuramos CORS
-app.use(cors());
-
+// Lista de dominios que tienen permiso
 const allowedOrigins = [
-    "http://localhost",
-    "http://localhost:5173",
-    "https://*.scf.usercontent.goog"
-]; // Añade los orígenes permitidos aquí
+    'http://localhost',
+    'http://localhost:5173',
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
+    // 1. Permite solicitudes sin origen (como las de Postman o apps móviles)
+    if (!origin) {
+        return callback(null, true);
     }
+    
+    // 2. Revisa si el origen está en la lista blanca
+    if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+    }
+    
+    // 3. Revisa si el origen es de Canvas de Gemini
+    if (origin.endsWith('.scf.usercontent.goog')) {
+        return callback(null, true);
+    }
+    
+    // 4. Si no es ninguno de los anteriores, lo rechaza
+    callback(new Error('Acceso bloqueado por la política de CORS'));
   },
 };
 
+// Usa la configuración de CORS en todas las rutas
 app.use(cors(corsOptions));
 
 
