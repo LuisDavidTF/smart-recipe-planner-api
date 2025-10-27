@@ -13,9 +13,9 @@ router.post(
   createRecipeController
 );
 
-// GET /api/v1/recipes/public - Ruta para buscar recetas públicas con paginación por cursor
+// GET /api/v1/recipes - Ruta para buscar recetas públicas con paginación por cursor
 router.get(
-  "/public",
+  "/",
   validateSchema(findPublicRecipesSchema, 'query'),
   findPublicRecipesController
 );
