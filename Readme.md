@@ -101,9 +101,9 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
 
 | Método | Ruta                      | Descripción                                     | Autenticación |
 | :----- | :------------------------ | :---------------------------------------------- | :------------ |
-| `POST` | `/api/v1/auth/register`   | Registra un nuevo usuario.                      | No requerida  |
-| `POST` | `/api/v1/auth/login`      | Inicia sesión y devuelve un JWT.                | No requerida  |
-| `POST` | `/api/v1/recipes`         | Crea una nueva receta.                          | Requerida     |
+| `POST` | `/api/v1/users/register`   | Registra un nuevo usuario.                      | No requerida  |
+| `POST` | `/api/v1/users/login`      | Inicia sesión y devuelve un JWT.                | No requerida  |
+| `POST` | `/api/v1/recipes/create`         | Crea una nueva receta.                          | Requerida     |
 | `GET`  | `/api/v1/recipes`         | Obtiene el feed de recetas públicas (paginado). | Opcional      |
 | `GET`  | `/api/v1/recipes/:id`     | Obtiene una receta por su ID.                   | Opcional      |
 | `PATCH`| `/api/v1/recipes/:id`     | Actualiza una receta existente.                 | Requerida     |
