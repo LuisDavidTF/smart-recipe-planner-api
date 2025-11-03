@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "generationCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "last_generation_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
