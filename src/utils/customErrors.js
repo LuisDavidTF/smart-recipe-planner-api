@@ -35,6 +35,16 @@ export class UnauthorizedError extends HttpError {
 }
 
 /**
+ * Error para recursos no encontrados (HTTP 404).
+ * Ideal para cuando una receta o usuario no existe.
+ */
+export class NotFoundError extends HttpError {
+  constructor(message = 'Recurso no encontrado.') {
+    super(message, 404);
+  }
+}
+
+/**
  * Error para conflictos de recursos existentes (HTTP 409).
  * Perfecto para cuando un email ya está registrado.
  */
