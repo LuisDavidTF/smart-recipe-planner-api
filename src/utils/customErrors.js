@@ -35,12 +35,42 @@ export class UnauthorizedError extends HttpError {
 }
 
 /**
+ * Error para recursos no encontrados (HTTP 404).
+ * Ideal para cuando una receta o usuario no existe.
+ */
+export class NotFoundError extends HttpError {
+  constructor(message = 'Recurso no encontrado.') {
+    super(message, 404);
+  }
+}
+
+/**
  * Error para conflictos de recursos existentes (HTTP 409).
  * Perfecto para cuando un email ya está registrado.
  */
 export class ConflictError extends HttpError {
   constructor(message = 'El recurso ya existe.') {
     super(message, 409);
+  }
+}
+
+/**
+ * Error para demasiadas solicitudes (HTTP 429).
+ * Usar para limitar la tasa de peticiones.
+ */
+export class TooManyRequestsError extends HttpError {
+  constructor(message = 'Demasiadas solicitudes. Por favor, inténtelo de nuevo más tarde.') {
+    super(message, 429);
+  }
+}
+
+/**
+ * Error para fallos internos del servidor (HTTP 500).
+ * Usar para errores inesperados en el backend.
+ */
+export class InternalServerError extends HttpError {
+  constructor(message = 'Error interno del servidor.') {
+    super(message, 500);
   }
 }
 

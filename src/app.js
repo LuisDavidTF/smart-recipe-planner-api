@@ -4,6 +4,7 @@ import cors from 'cors';
 import userRoutes from '#api/auth/auth.routes.js'; // Importamos nuestras rutas de usuario
 import recipeRoutes from '#api/recipes/recipes.routes.js'; // Importamos nuestras rutas de recetas
 import errorHandler from '#middlewares/errorHandler.js';// Importamos el middleware de manejo de errores
+import aiRoutes from '#api/ai/ai.routes.js'; // Importamos nuestras rutas de AI
 
 // Creamos la aplicación de Express
 
@@ -50,6 +51,7 @@ app.use(express.urlencoded({ extended: true })); // Middleware para parsear bodi
 // Usamos nuestras rutas de usuario con el prefijo /api/v1/users
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/recipes', recipeRoutes); // Usamos nuestras rutas de recetas con el prefijo /api/v1/recipes
+app.use('/api/v1/ai', aiRoutes); // Usamos nuestras rutas de AI con el prefijo /api/v1/ai
 
 // Middleware para manejar errores de sintaxis JSON
 app.use(jsonSyntaxErrorHandler);
@@ -58,6 +60,10 @@ app.use(jsonSyntaxErrorHandler);
 app.use(errorHandler);
 
 // Iniciamos el servidor
+
+
+// simulamos despertando el servidor la primera vez y se va a despertar a lo largo de 5 segundos como si fuera un servidor serverless
+
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

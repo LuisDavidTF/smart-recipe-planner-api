@@ -9,6 +9,36 @@
 
 API RESTful robusta y escalable para una aplicación de planificación de recetas inteligentes. Diseñada con principios de **seguridad por diseño** y una **arquitectura de capas profesional**, esta API proporciona la base para gestionar usuarios, recetas, inventarios y la generación de menús semanales.
 
+## 📝 Tabla de Contenidos
+
+- [🌐 API en Vivo](#-api-en-vivo)
+- [✨ Características Destacadas](#-características-destacadas)
+- [🧠 Funcionalidades de IA](#-funcionalidades-de-ia)
+- [🏛️ Arquitectura](#-arquitectura)
+- [🛡️ Mitigación de Amenazas (OWASP)](#-mitigación-de-amenazas-owasp)
+- [🚀 Cómo Empezar](#-cómo-empezar)
+  - [Prerrequisitos](#prerrequisitos)
+  - [Instalación](#instalación)
+  - [Variables de Entorno](#variables-de-entorno)
+  - [Migraciones de Base de Datos](#migraciones-de-base-de-datos)
+  - [Iniciar el Servidor](#iniciar-el-servidor)
+- [📚 Endpoints de la API](#-endpoints-de-la-api)
+- [🤝 Contribución](#-contribución)
+- [📄 Licencia](#-licencia)
+- [👤 Autor](#-autor)
+
+---
+
+## 🧠 **Funcionalidades de IA**
+
+Esta API integra capacidades de inteligencia artificial para enriquecer la experiencia del usuario en la planificación de recetas. Las funcionalidades clave incluyen:
+
+*   **Generación Inteligente de Recetas:** Utiliza modelos de IA para sugerir y crear recetas personalizadas basadas en las preferencias del usuario, ingredientes disponibles y restricciones dietéticas.
+*   **Análisis Nutricional:** Proporciona información nutricional detallada para las recetas, ayudando a los usuarios a mantener una dieta equilibrada.
+*   **Optimización de Menús Semanales:** Asiste en la creación de planes de comidas semanales optimizados, considerando la variedad, el balance nutricional y la minimización del desperdicio de alimentos.
+
+---
+
 ## 🌐 **API en Vivo**
 
 La API está desplegada en Render y es accesible públicamente.
@@ -108,3 +138,39 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
 | `GET`  | `/api/v1/recipes/:id`     | Obtiene una receta por su ID.                   | Opcional      |
 | `PATCH`| `/api/v1/recipes/:id`     | Actualiza una receta existente.                 | Requerida     |
 | `DELETE`| `/api/v1/recipes/:id`    | Elimina una receta.                             | Requerida     |
+
+---
+
+## ⚙️ **Variables de Entorno**
+
+Para ejecutar esta aplicación, necesitarás configurar las siguientes variables de entorno en un archivo `.env` en la raíz del proyecto:
+
+*   `DATABASE_URL`: URL de conexión a la base de datos PostgreSQL (ej. `postgresql://user:password@host:port/database?schema=public`).
+*   `JWT_SECRET`: Clave secreta para firmar y verificar los tokens JWT.
+*   `PORT`: Puerto en el que la API escuchará (por defecto: `3000`).
+*   `AI_API_KEY`: Clave de API para el servicio de inteligencia artificial.
+
+---
+
+## 🤝 **Contribución**
+
+¡Las contribuciones son bienvenidas! Si deseas mejorar este proyecto, por favor, sigue estos pasos:
+
+1.  Haz un fork del repositorio.
+2.  Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
+3.  Realiza tus cambios y asegúrate de que las pruebas pasen.
+4.  Haz commit de tus cambios (`git commit -m 'feat: Añade nueva funcionalidad'`).
+5.  Sube tus cambios a tu fork (`git push origin feature/nueva-funcionalidad`).
+6.  Abre un Pull Request.
+
+---
+
+## 📄 **Licencia**
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+## 👤 **Autor**
+
+**Luis David Tovar** - [GitHub](https://github.com/LuisDavidTF)

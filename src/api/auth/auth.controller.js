@@ -1,5 +1,5 @@
-import { registerUser, loginUserService } from '#auth/auth.service.js';
-import { UnauthorizedError } from '#utils/customErrors.js';
+import { registerUser, loginUserService, getUserByIdService } from '#auth/auth.service.js';
+
 // Controlador para registrar un nuevo usuario
 export const registerController = async (req, res, next) => {
   const { name, email, password } = req.validated.body; // Extraemos los datos del cuerpo de la solicitud
@@ -23,10 +23,26 @@ export const loginController = async (req, res, next) => {
 
   try {
     const user = await loginUserService(email, password); // Llamamos al servicio para loguear el usuario
-    if (!user) {
-      throw new UnauthorizedError('Credenciales invalidas.');// Lanzamos un error de no autorizado si las credenciales son inválidas
-    }
     res.status(200).json(user); // Si todo está bien, respondemos con el usuario
+  } catch (err) {
+    //Cualquier error, ya sea nuestro o de la base de datos, se delega
+    next(err);
+  }
+};
+
+
+/**
+ * Controlador para obtener los datos del usuario autenticado (me).
+ * @param {object} req - La solicitud HTTP.
+ * @param {object} res - La respuesta HTTP.
+ * @param {function} next - La función para pasar al siguiente middleware en caso de error.
+ */
+
+export const getMeController = async (req, res, next) => {
+  try {
+    const userId = req.user.id; // Extraemos el ID del usuario del payload del token JWT
+    const user = await getUserByIdService(userId); // Llamamos al servicio para obtener los datos del usuario
+    res.status(200).json(user); // Respondemos con los datos del usuario
   } catch (err) {
     //Cualquier error, ya sea nuestro o de la base de datos, se delega
     next(err);
