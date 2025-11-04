@@ -29,7 +29,7 @@ export const findPublicRecipesService = async (validatedQuery) => {
   }
 
   const recipesPage = await recipesRepository.findPublicRecipes(limit, cursor);
-
+  console.log(limit)
   return recipesPage;
 };
 

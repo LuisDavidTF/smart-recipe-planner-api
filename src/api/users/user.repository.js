@@ -1,5 +1,4 @@
 import prisma from '#config/prisma.js';
-import { create } from '../recipes/recipes.repository';
 
 /**
  * Crea un nuevo usuario
@@ -33,7 +32,26 @@ export async function getUserById(id) {
       email: true,
       profile_picture_url: true,
       role: true,
-      createdAt: true
+      createdAt: true,
+      generationCount: true,
+      lastGenerationAt: true,
     }
   });// Buscamos un usuario por su ID y retornamos el usuario encontrado
+}
+
+/**
+ * Actualiza el contador de generación y la fecha para un usuario.
+ * @param {number} userId - El ID del usuario a actualizar.
+ * @param {number} newCount - El nuevo valor del contador.
+ * @param {Date} newTimestamp - La nueva fecha de generación.
+ * @returns {Promise<import('@prisma/client').User>} El usuario actualizado.
+ */
+export async function updateGenerationCounter(userId, newCount, newTimestamp) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      generationCount: newCount,
+      lastGenerationAt: newTimestamp,
+    },
+  });
 }

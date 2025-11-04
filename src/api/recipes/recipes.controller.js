@@ -24,6 +24,8 @@ export const findPublicRecipesController = async (req, res, next) => {
         // Simplemente pasamos los datos validados directamente al servicio.
         const results = await findPublicRecipesService(req.validated.query);
 
+        //tarda 3 segundos en responder para simular carga
+        await new Promise(resolve => setTimeout(resolve, 3000));
         res.status(200).json(results);
     } catch (error) {
         next(error);

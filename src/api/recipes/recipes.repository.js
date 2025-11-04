@@ -128,7 +128,15 @@ export const findPublicRecipes = async (limit, cursor) => {
       name: true,
       description: true,
       image_url: true,
-      createdAt: true
+      createdAt: true,
+      preparation_time_minutes: true,
+      type: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }], // Ordenamos por fecha de creación descendente y luego por ID para consistencia
     take: take,
@@ -156,18 +164,22 @@ export const findPublicRecipes = async (limit, cursor) => {
 
   // Determinamos el nextCursor
   let nextCursor = null;
+  let responseRecipes = recipes;
   // Si obtuvimos el número máximo de registros, significa que hay más datos disponibles
   if (recipes.length === take) {
-    const lastRecipe = recipes.pop(); // Removemos el registro extra
+    // El elemento extra (en el índice 'limit') nos dice que hay más páginas.
+    // El cursor real es el último elemento que SÍ vamos a devolver (en el índice 'limit - 1').
+    const cursorRecipe = recipes[limit - 1];
     // Creamos el nextCursor compuesto
     nextCursor = {
-      createdAt: lastRecipe.createdAt.toISOString(),
-      id: lastRecipe.id,
+      createdAt: cursorRecipe.createdAt.toISOString(),
+      id: cursorRecipe.id,
     };
+    responseRecipes = recipes.slice(0, limit); // Devolvemos solo la cantidad pedida.
   }
   // Devolvemos los datos y el nextCursor
   return {
-    data: recipes,
+    data: responseRecipes,
     nextCursor: nextCursor,
   }
 };

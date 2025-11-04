@@ -1,4 +1,4 @@
-import { HttpError } from '../utils/customErrors.js';
+import { HttpError } from '#utils/customErrors.js';
 
 const errorHandler = (err, req, res, next) => {
   // En futuro cambiar por un sistema de logging más robusto si es necesario como Winston, Bunyan o Pino
@@ -18,7 +18,7 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Errores personalizados con código de estado HTTP
-  if (err instanceof HttpError) {
+  if (err.statusCode) {
     return res.status(err.statusCode).json({ error: err.message });
   }
 

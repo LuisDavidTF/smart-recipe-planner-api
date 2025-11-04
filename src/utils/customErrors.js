@@ -54,4 +54,24 @@ export class ConflictError extends HttpError {
   }
 }
 
+/**
+ * Error para demasiadas solicitudes (HTTP 429).
+ * Usar para limitar la tasa de peticiones.
+ */
+export class TooManyRequestsError extends HttpError {
+  constructor(message = 'Demasiadas solicitudes. Por favor, inténtelo de nuevo más tarde.') {
+    super(message, 429);
+  }
+}
+
+/**
+ * Error para fallos internos del servidor (HTTP 500).
+ * Usar para errores inesperados en el backend.
+ */
+export class InternalServerError extends HttpError {
+  constructor(message = 'Error interno del servidor.') {
+    super(message, 500);
+  }
+}
+
 export { HttpError };
