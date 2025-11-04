@@ -15,6 +15,7 @@ const port = process.env.PORT || 3000;
 const allowedOrigins = [
     'http://localhost',
     'http://localhost:5173',
+    'https://smart-recipe-planner.vercel.app'
 ];
 
 const corsOptions = {
