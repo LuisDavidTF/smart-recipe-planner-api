@@ -1,6 +1,6 @@
 import { getUserById, updateGenerationCounter } from "#users/user.repository.js";
 import { GoogleGenAI } from "@google/genai";
-import { InternalServerError, TooManyRequestsError } from "#utils/CustomErrors.js";
+import { InternalServerError, TooManyRequestsError } from "#utils/customErrors.js";
 
 const GEMINI_RESPONSE_SCHEMA = {
     type: "object",
