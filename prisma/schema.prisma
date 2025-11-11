@@ -27,6 +27,7 @@ model User {
 
 
   recipes Recipe[] // <-- AÑADIDO: Relación inversa para acceder a las recetas del usuario
+  pantryItems UserPantryItem[] // <-- AÑADIDO: Relación inversa para acceder a los items del usuario
 
   @@map("users")
 }
@@ -87,6 +88,7 @@ model Ingredient {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   recipes RecipeIngredient[] // <-- AÑADIDO: Relación inversa
+  usersInPantry UserPantryItem[] // <-- AÑADIDO: Relación inversa
 
   @@map("ingredients")
 }
@@ -103,4 +105,22 @@ model RecipeIngredient {
 
   @@map("recipe_ingredients")
   @@unique([recipe_id, ingredient_id]) // <-- AÑADIDO: Previene ingredientes duplicados en la misma receta
+}
+
+model UserPantryItem {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  user          User     @relation(fields: [user_id], references: [id])
+
+  ingredientId Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+
+  quantity     Decimal @db.Decimal(10,2)
+  unit_of_measure String
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("user_pantry_items")
+  @@unique([user_id, ingredientId])
 }
