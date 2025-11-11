@@ -1,8 +1,9 @@
 import express, { json } from 'express';
 import { jsonSyntaxErrorHandler } from '#middlewares/jsonSyntaxErrorHandler.js'; // Importamos el middleware para manejar errores de sintaxis JSON
 import cors from 'cors';
-import userRoutes from '#api/auth/auth.routes.js'; // Importamos nuestras rutas de usuario
+import authRoutes from '#api/auth/auth.routes.js'; // Importamos nuestras rutas de usuario
 import recipeRoutes from '#api/recipes/recipes.routes.js'; // Importamos nuestras rutas de recetas
+import usersRoutes from '#api/users/user.routes.js'; // Importamos nuestras rutas de usuarios'
 import errorHandler from '#middlewares/errorHandler.js';// Importamos el middleware de manejo de errores
 import aiRoutes from '#api/ai/ai.routes.js'; // Importamos nuestras rutas de AI
 
@@ -50,9 +51,10 @@ app.use(express.json()); // Middleware para parsear bodies JSON
 app.use(express.urlencoded({ extended: true })); // Middleware para parsear bodies urlencoded
 
 // Usamos nuestras rutas de usuario con el prefijo /api/v1/users
-app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/recipes', recipeRoutes); // Usamos nuestras rutas de recetas con el prefijo /api/v1/recipes
 app.use('/api/v1/ai', aiRoutes); // Usamos nuestras rutas de AI con el prefijo /api/v1/ai
+app.use('/api/v1/users', usersRoutes); // Usamos nuestras rutas de usuarios con el prefijo /api/v1/users
 
 // Middleware para manejar errores de sintaxis JSON
 app.use(jsonSyntaxErrorHandler);
