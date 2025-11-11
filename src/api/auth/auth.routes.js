@@ -6,13 +6,13 @@ import { isAuthenticated } from '#middlewares/authentication.js';
 
 const router = Router();
 
-// POST /api/v1/users/register - Ruta para registrar un nuevo usuario
+// POST /api/v1/auth/register - Ruta para registrar un nuevo usuario
 router.post('/register', validateSchema(registerSchema), registerController); // pasamos el middleware de validación y el controlador
 
-// POST /api/v1/users/login - Ruta para loguear un usuario
+// POST /api/v1/auth/login - Ruta para loguear un usuario
 router.post('/login', validateSchema(loginSchema), loginController); // pasamos el middleware de validación y el controlador
 
-// GET /api/v1/users/me - Ruta para obtener los datos del usuario autenticado
+// GET /api/v1/auth/me - Ruta para obtener los datos del usuario autenticado
 router.get('/me', isAuthenticated, getMeController); // pasamos el middleware de autenticación y el controlador
 
 // Exportamos el enrutador
