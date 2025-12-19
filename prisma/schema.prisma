@@ -7,29 +7,100 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                  Int              @id @default(autoincrement())
+  name                String
+  email               String           @unique
+  password_hash       String?
+  google_id           String?          @unique
+  profile_picture_url String?
+  role                String           @default("user") @db.VarChar(50)
+  createdAt           DateTime         @default(now()) @map("created_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+  generationCount     Int              @default(0)
+  lastGenerationAt    DateTime         @default(now()) @map("last_generation_at")
+  public_id           String           @unique(map: "uk_users_public_id") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recipes             Recipe[]
+  pantryItems         UserPantryItem[]
+
+  @@map("users")
+}
+
+model Recipe {
+  id                       Int                @id @default(autoincrement())
+  user_id                  Int
+  name                     String
+  description              String
+  image_url                String
+  preparation_time_minutes Int
+  type                     RecipeType
+  visibility               RecipeVisibility   @default(private)
+  instructions             Json
+  createdAt                DateTime           @default(now()) @map("created_at")
+  updatedAt                DateTime           @updatedAt @map("updated_at")
+  ingredients              RecipeIngredient[]
+  media                    RecipeMedia[]
+  user                     User               @relation(fields: [user_id], references: [id])
+
+  @@index([createdAt, id])
+  @@map("recipes")
+}
+
+model RecipeMedia {
+  id            Int             @id @default(autoincrement())
+  recipe_id     Int
+  url           String
+  display_order Int
+  createdAt     DateTime        @default(now()) @map("created_at")
+  media_type    RecipeMediaType
+  recipe        Recipe          @relation(fields: [recipe_id], references: [id])
+
+  @@map("recipe_media")
+}
+
+model Ingredient {
+  id            Int                @id @default(autoincrement())
+  name          String             @unique
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+  recipes       RecipeIngredient[]
+  usersInPantry UserPantryItem[]
+
+  @@map("ingredients")
+}
+
+model RecipeIngredient {
+  id              Int        @id @default(autoincrement())
+  recipe_id       Int
+  ingredient_id   Int
+  quantity        Decimal?   @db.Decimal(10, 2)
+  unit_of_measure String
+  createdAt       DateTime   @default(now()) @map("created_at")
+  ingredient      Ingredient @relation(fields: [ingredient_id], references: [id])
+  recipe          Recipe     @relation(fields: [recipe_id], references: [id])
+
+  @@unique([recipe_id, ingredient_id])
+  @@map("recipe_ingredients")
+}
+
+model UserPantryItem {
+  id              Int        @id @default(autoincrement())
+  user_id         Int
+  ingredientId    Int
+  quantity        Decimal    @db.Decimal(10, 2)
+  unit_of_measure String
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  ingredient      Ingredient @relation(fields: [ingredientId], references: [id])
+  user            User       @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, ingredientId])
+  @@map("user_pantry_items")
+}
+
 enum Role {
   user
   admin
-}
-
-model User {
-  id                  Int      @id @default(autoincrement())
-  name                String
-  email               String   @unique
-  password_hash       String?
-  google_id           String?  @unique
-  profile_picture_url String?
-  role                Role     @default(user)
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
-  generationCount     Int      @default(0)
-  lastGenerationAt    DateTime @default(now()) @map("last_generation_at")
-
-
-  recipes Recipe[] // <-- AÑADIDO: Relación inversa para acceder a las recetas del usuario
-  pantryItems UserPantryItem[] // <-- AÑADIDO: Relación inversa para acceder a los items del usuario
-
-  @@map("users")
 }
 
 enum RecipeType {
@@ -43,84 +114,7 @@ enum RecipeVisibility {
   private
 }
 
-model Recipe {
-  id                       Int              @id @default(autoincrement())
-  user_id                  Int
-  user                     User             @relation(fields: [user_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
-  name                     String
-  description              String           @db.Text // <-- AÑADIDO: Tipo explícito para textos largos
-  image_url                String
-  preparation_time_minutes Int
-  type                     RecipeType
-  visibility               RecipeVisibility @default(private)
-  instructions             Json // <-- CORREGIDO: Typo
-  createdAt                DateTime         @default(now()) @map("created_at")
-  updatedAt                DateTime         @updatedAt @map("updated_at")
-
-  media       RecipeMedia[]      // <-- AÑADIDO: Relación inversa
-  ingredients RecipeIngredient[] // <-- AÑADIDO: Relación inversa
-
-  @@index([createdAt, id]) // <-- CORREGIDO: Se usa el nombre del campo del modelo, no el de la columna
-  @@map("recipes")
-}
-
 enum RecipeMediaType {
   image
   video
-}
-
-model RecipeMedia {
-  id            Int                 @id @default(autoincrement())
-  recipe_id     Int
-  recipe        Recipe              @relation(fields: [recipe_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
-  url           String
-  media_type    RecipeMediaType
-  display_order Int
-  createdAt     DateTime            @default(now()) @map("created_at")
-
-  @@map("recipe_media")
-}
-
-model Ingredient {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  recipes RecipeIngredient[] // <-- AÑADIDO: Relación inversa
-  usersInPantry UserPantryItem[] // <-- AÑADIDO: Relación inversa
-
-  @@map("ingredients")
-}
-
-model RecipeIngredient {
-  id              Int      @id @default(autoincrement())
-  recipe_id       Int
-  recipe          Recipe   @relation(fields: [recipe_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
-  ingredient_id   Int
-  ingredient      Ingredient @relation(fields: [ingredient_id], references: [id]) // <-- MEJORADO: Referencia de objeto completa
-  quantity        Decimal? @db.Decimal(10,2)
-  unit_of_measure String
-  createdAt       DateTime @default(now()) @map("created_at")
-
-  @@map("recipe_ingredients")
-  @@unique([recipe_id, ingredient_id]) // <-- AÑADIDO: Previene ingredientes duplicados en la misma receta
-}
-
-model UserPantryItem {
-  id            Int      @id @default(autoincrement())
-  user_id       Int
-  user          User     @relation(fields: [user_id], references: [id])
-
-  ingredientId Int
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-
-  quantity     Decimal @db.Decimal(10,2)
-  unit_of_measure String
-
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  @@map("user_pantry_items")
-  @@unique([user_id, ingredientId])
 }
