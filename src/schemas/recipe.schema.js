@@ -8,7 +8,7 @@ export const createRecipeSchema = z.object({
     type: z.enum(['breakfast', 'lunch', 'dinner'], { required_error: 'El tipo de receta es obligatorio' }),
     visibility: z.enum(['public', 'private']).optional().default('private'),
 
-    instructions: z.record(z.string(), z.string(), { required_error: 'Las instrucciones son requeridas.' }),
+    instructions: z.array(z.string().min(5, {message: 'Cada paso debe tener al menos 5 letras.'}), { required_error: 'Las instrucciones son requeridas.' }).min(1, { message: 'La receta debe tener al menos una instrucción.' }),
 
     ingredients: z.array(z.object({
         name: z.string({ required_error: 'El nombre del ingrediente es obligatorio.' }).nonempty('El nombre del ingrediente no puede estar vacío.'),

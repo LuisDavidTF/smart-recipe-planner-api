@@ -55,3 +55,27 @@ export async function updateGenerationCounter(userId, newCount, newTimestamp) {
     },
   });
 }
+
+/**
+ * Actualiza la información del perfil de un usuario.
+ * @param {number} userId - El ID del usuario a actualizar.
+ * @param {Object} profileData - Los datos del perfil a actualizar.
+ */
+export async function updateUserProfile(userId, profileData) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: profileData,
+  });
+  return profileData;
+}
+
+/** * Actualiza la contraseña de un usuario.
+ * @param {number} userId - El ID del usuario a actualizar.
+ * @param {string} newPasswordHash - El nuevo hash de la contraseña.
+ */
+export async function updatePassword(userId, newPasswordHash) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: newPasswordHash },
+  });
+}

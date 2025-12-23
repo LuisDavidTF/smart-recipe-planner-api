@@ -7,35 +7,20 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-336791?style=for-the-badge&logo=postgresql)
 ![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens)
 
-API RESTful robusta y escalable para una aplicación de planificación de recetas inteligentes. Diseñada con principios de **seguridad por diseño** y una **arquitectura de capas profesional**, esta API proporciona la base para gestionar usuarios, recetas, inventarios y la generación de menús semanales.
+API RESTful robusta y escalable para una aplicación de planificación de recetas inteligentes. Diseñada con principios de **seguridad por diseño** y una **arquitectura de capas profesional**, esta API proporciona la base para gestionar usuarios, recetas y la generación de nuevas recetas mediante inteligencia artificial.
 
 ## 📝 Tabla de Contenidos
 
 - [🌐 API en Vivo](#-api-en-vivo)
 - [✨ Características Destacadas](#-características-destacadas)
-- [🧠 Funcionalidades de IA](#-funcionalidades-de-ia)
+- [🧠 Funcionalidad de IA](#-funcionalidad-de-ia)
+- [📚 Documentación de la API](#-documentación-de-la-api)
 - [🏛️ Arquitectura](#-arquitectura)
 - [🛡️ Mitigación de Amenazas (OWASP)](#-mitigación-de-amenazas-owasp)
 - [🚀 Cómo Empezar](#-cómo-empezar)
-  - [Prerrequisitos](#prerrequisitos)
-  - [Instalación](#instalación)
-  - [Variables de Entorno](#variables-de-entorno)
-  - [Migraciones de Base de Datos](#migraciones-de-base-de-datos)
-  - [Iniciar el Servidor](#iniciar-el-servidor)
-- [📚 Endpoints de la API](#-endpoints-de-la-api)
+- [⚙️ Variables de Entorno](#-variables-de-entorno)
 - [🤝 Contribución](#-contribución)
-- [📄 Licencia](#-licencia)
 - [👤 Autor](#-autor)
-
----
-
-## 🧠 **Funcionalidades de IA**
-
-Esta API integra capacidades de inteligencia artificial para enriquecer la experiencia del usuario en la planificación de recetas. Las funcionalidades clave incluyen:
-
-*   **Generación Inteligente de Recetas:** Utiliza modelos de IA para sugerir y crear recetas personalizadas basadas en las preferencias del usuario, ingredientes disponibles y restricciones dietéticas.
-*   **Análisis Nutricional:** Proporciona información nutricional detallada para las recetas, ayudando a los usuarios a mantener una dieta equilibrada.
-*   **Optimización de Menús Semanales:** Asiste en la creación de planes de comidas semanales optimizados, considerando la variedad, el balance nutricional y la minimización del desperdicio de alimentos.
 
 ---
 
@@ -49,12 +34,35 @@ La API está desplegada en Render y es accesible públicamente.
 
 ## ✨ **Características Destacadas**
 
-* **Arquitectura Profesional:** Implementación estricta del patrón **Controlador-Servicio-Repositorio** para una máxima mantenibilidad y separación de responsabilidades.
-* **Autorización a Nivel de Base de Datos:** Lógica de permisos robusta que previene **IDOR (Insecure Direct Object Reference)** al incluir el `user_id` en la cláusula `WHERE` de todas las consultas sensibles.
-* **Transacciones Atómicas:** Las operaciones complejas, como la creación de una receta con sus ingredientes y multimedia, se ejecutan dentro de una **transacción de base de datos** (`$transaction`), garantizando la integridad de los datos.
-* **Feed Eficiente:** El endpoint de recetas públicas utiliza **paginación por cursor compuesto** (`createdAt` + `id`) y un **índice de base de datos** para un rendimiento óptimo en *infinite scroll*.
-* **Validación Rigurosa:** Todos los datos de entrada (`body`, `query`, `params`) son validados y saneados por schemas de **Zod** a través de un middleware genérico.
-* **Seguridad de Contraseñas:** Las credenciales de usuario se protegen mediante hashing con **bcrypt**.
+*   **Arquitectura Profesional:** Implementación estricta del patrón **Controlador-Servicio-Repositorio** para una máxima mantenibilidad.
+*   **Generación de Recetas con IA:** Crea recetas completas a partir de una simple descripción de texto.
+*   **Seguridad Robusta:** Autorización a nivel de base de datos (previene IDOR), hashing de contraseñas con **bcrypt** y validación de esquemas con **Zod**.
+*   **Transacciones Atómicas:** Las operaciones complejas se ejecutan dentro de transacciones de base de datos para garantizar la integridad de los datos.
+*   **Feed Eficiente:** Paginación por cursor compuesto para un rendimiento óptimo en *infinite scroll*.
+
+---
+
+## 🧠 **Funcionalidad de IA**
+
+### **Generación Mágica de Recetas**
+
+La API integra un modelo de IA (Gemini Flash) para generar recetas completas a partir de una simple solicitud de texto del usuario. Esta funcionalidad, denominada "Generación Mágica", interpreta el texto y devuelve una receta estructurada.
+
+*   **Entrada:** Una cadena de texto simple, como "pasta con pollo para una cena rápida" o "un desayuno saludable con avena y frutas".
+*   **Salida:** Un objeto JSON que contiene:
+    *   `name`: Nombre de la receta.
+    *   `description`: Descripción breve.
+    *   `preparationTime`: Tiempo de preparación en minutos.
+    *   `ingredients`: Una lista de ingredientes con nombre, cantidad y unidad de medida.
+    *   `instructions`: Pasos de la preparación.
+    *   `type`: Tipo de comida (ej. "breakfast", "lunch", "dinner").
+*   **Límite de Uso:** Para controlar los costos, cada usuario puede realizar un máximo de **3 generaciones de recetas por día**.
+
+---
+
+## 📚 **Documentación de la API**
+
+La documentación detallada de los endpoints, incluyendo ejemplos de solicitudes y respuestas, se encuentra en el archivo [**API_DOCS.md**](./API_DOCS.md).
 
 ---
 
@@ -62,25 +70,22 @@ La API está desplegada en Render y es accesible públicamente.
 
 El proyecto sigue un diseño de capas claro que aísla la lógica de negocio del framework y del acceso a datos.
 
-
-
 1.  **Capa de Rutas (`routes`):** Define los endpoints y encadena los middlewares.
-2.  **Capa de Middlewares (`middlewares`):** Maneja preocupaciones transversales como `authentication.js`, `validateSchema.js` y un `errorHandler.js` centralizado.
-3.  **Capa de Controladores (`controllers`):** Orquesta el flujo HTTP, extrayendo datos validados de `req`.
-4.  **Capa de Servicios (`services`):** Contiene la lógica de negocio pura, agnóstica al protocolo HTTP.
-5.  **Capa de Repositorios (`repositories`):** Es la única capa que interactúa con la base de datos a través de **Prisma**, encapsulando todas las consultas.
+2.  **Capa de Middlewares (`middlewares`):** Maneja `authentication`, `validateSchema` y `errorHandler`.
+3.  **Capa de Controladores (`controllers`):** Orquesta el flujo HTTP.
+4.  **Capa de Servicios (`services`):** Contiene la lógica de negocio pura.
+5.  **Capa de Repositorios (`repositories`):** Encapsula todas las consultas a la base de datos con Prisma.
 
 ---
 
 ## 🛡️ **Mitigación de Amenazas (OWASP)**
 
-La API ha sido construida con la seguridad como una prioridad, mitigando varias de las amenazas más críticas del **OWASP Top 10**:
+La API ha sido construida con la seguridad como una prioridad:
 
-* **A01: Broken Access Control:** Prevenido mediante la validación del `user_id` del token JWT en las cláusulas `WHERE` de las consultas a la base de datos.
-* **A02: Cryptographic Failures:** Prevenido mediante el hashing de contraseñas con `bcrypt`.
-* **A03: Injection:** Prevenido por el uso de **Prisma ORM** (que parametriza todas las consultas) y la validación estricta de **Zod**.
-* **A05: Security Misconfiguration:** Los secretos se gestionan a través de variables de entorno (`.env`) y no se incluyen en el repositorio.
-* **A08: Software and Data Integrity Failures:** Prevenido por la validación de Zod, que asegura que todos los datos que ingresan al sistema tienen la estructura y el tipo correctos.
+*   **A01: Broken Access Control:** Prevenido mediante la validación del `user_id` del token JWT en las cláusulas `WHERE`.
+*   **A02: Cryptographic Failures:** Prevenido mediante el hashing de contraseñas con `bcrypt`.
+*   **A03: Injection:** Prevenido por el uso de **Prisma ORM** y la validación estricta de **Zod**.
+*   **A05: Security Misconfiguration:** Los secretos se gestionan a través de variables de entorno.
 
 ---
 
@@ -90,15 +95,15 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
 
 ### **Prerrequisitos**
 
-* Node.js (v18 o superior)
-* PNPM
-* PostgreSQL
+*   Node.js (v18 o superior)
+*   PNPM
+*   PostgreSQL
 
 ### **Instalación**
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone [https://github.com/LuisDavidTF/smart-recipe-planner-api.git](https://github.com/LuisDavidTF/smart-recipe-planner-api.git)
+    git clone https://github.com/LuisDavidTF/smart-recipe-planner-api.git
     cd smart-recipe-planner-api
     ```
 
@@ -108,8 +113,8 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
     ```
 
 3.  **Configura las variables de entorno:**
-    * Crea una copia del archivo de ejemplo `.env.example` y renómbralo a `.env`.
-    * Rellena las variables, especialmente `DATABASE_URL` y `JWT_SECRET`.
+    *   Crea una copia del archivo `.env.example` y renómbralo a `.env`.
+    *   Rellena las variables, especialmente `DATABASE_URL` y `JWT_SECRET`.
     ```bash
     cp .env.example .env
     ```
@@ -123,51 +128,25 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
     ```bash
     pnpm run dev
     ```
+
     La API estará disponible en `http://localhost:3000`.
-
----
-
-## 📚 **Endpoints de la API**
-
-| Método | Ruta                      | Descripción                                     | Autenticación |
-| :----- | :------------------------ | :---------------------------------------------- | :------------ |
-| `POST` | `/api/v1/users/register`   | Registra un nuevo usuario.                      | No requerida  |
-| `POST` | `/api/v1/users/login`      | Inicia sesión y devuelve un JWT.                | No requerida  |
-| `POST` | `/api/v1/recipes/create`         | Crea una nueva receta.                          | Requerida     |
-| `GET`  | `/api/v1/recipes`         | Obtiene el feed de recetas públicas (paginado). | Opcional      |
-| `GET`  | `/api/v1/recipes/:id`     | Obtiene una receta por su ID.                   | Opcional      |
-| `PATCH`| `/api/v1/recipes/:id`     | Actualiza una receta existente.                 | Requerida     |
-| `DELETE`| `/api/v1/recipes/:id`    | Elimina una receta.                             | Requerida     |
 
 ---
 
 ## ⚙️ **Variables de Entorno**
 
-Para ejecutar esta aplicación, necesitarás configurar las siguientes variables de entorno en un archivo `.env` en la raíz del proyecto:
+Para ejecutar esta aplicación, necesitarás configurar las siguientes variables de entorno en un archivo `.env`:
 
-*   `DATABASE_URL`: URL de conexión a la base de datos PostgreSQL (ej. `postgresql://user:password@host:port/database?schema=public`).
-*   `JWT_SECRET`: Clave secreta para firmar y verificar los tokens JWT.
+*   `DATABASE_URL`: URL de conexión a la base de datos PostgreSQL.
+*   `JWT_SECRET`: Clave secreta para firmar los tokens JWT.
 *   `PORT`: Puerto en el que la API escuchará (por defecto: `3000`).
-*   `AI_API_KEY`: Clave de API para el servicio de inteligencia artificial.
+*   `GEMINI_API_KEY`: Clave de API para el servicio de Google Gemini.
 
 ---
 
 ## 🤝 **Contribución**
 
-¡Las contribuciones son bienvenidas! Si deseas mejorar este proyecto, por favor, sigue estos pasos:
-
-1.  Haz un fork del repositorio.
-2.  Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
-3.  Realiza tus cambios y asegúrate de que las pruebas pasen.
-4.  Haz commit de tus cambios (`git commit -m 'feat: Añade nueva funcionalidad'`).
-5.  Sube tus cambios a tu fork (`git push origin feature/nueva-funcionalidad`).
-6.  Abre un Pull Request.
-
----
-
-## 📄 **Licencia**
-
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+¡Las contribuciones son bienvenidas! Si deseas mejorar este proyecto, por favor, abre un Pull Request para discutir los cambios propuestos.
 
 ---
 

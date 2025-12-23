@@ -1,5 +1,4 @@
-import { createUser } from '#users/user.repository.js';
-import { loginUser, getUserById } from '#users/user.repository.js';
+import { createUser , loginUser, getUserById } from '#users/user.repository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
