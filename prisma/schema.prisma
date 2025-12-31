@@ -33,8 +33,8 @@ model Recipe {
   description              String
   image_url                String
   preparation_time_minutes Int
-  type                     RecipeType
-  visibility               RecipeVisibility   @default(private)
+  type                     String             @db.VarChar(50)
+  visibility               String             @default("private") @db.VarChar(50)
   instructions             Json
   createdAt                DateTime           @default(now()) @map("created_at")
   updatedAt                DateTime           @updatedAt @map("updated_at")
@@ -47,13 +47,13 @@ model Recipe {
 }
 
 model RecipeMedia {
-  id            Int             @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   recipe_id     Int
   url           String
   display_order Int
-  createdAt     DateTime        @default(now()) @map("created_at")
-  media_type    RecipeMediaType
-  recipe        Recipe          @relation(fields: [recipe_id], references: [id])
+  createdAt     DateTime @default(now()) @map("created_at")
+  media_type    String   @db.VarChar(50)
+  recipe        Recipe   @relation(fields: [recipe_id], references: [id])
 
   @@map("recipe_media")
 }
