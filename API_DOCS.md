@@ -1,6 +1,10 @@
-# Documentación de la API
+# 📚 Documentación de la API (v1 - Legacy Reference)
 
-A continuación se detallan los endpoints más importantes con ejemplos completos.
+Esta documentación describe los endpoints disponibles en la versión v1 de la API (Node.js/Express). Aunque el entorno de producción público ha sido desactivado, estos endpoints son funcionales si ejecutas el proyecto localmente.
+
+### 🌐 URL Base
+* **Local:** `http://localhost:3000/api/v1`
+* **Producción:** *Desactivado (Ver README)*
 
 ### **Autenticación**
 
