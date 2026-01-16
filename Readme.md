@@ -7,103 +7,91 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-336791?style=for-the-badge&logo=postgresql)
 ![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens)
 
+# Smart Recipe Planner API
+
+> ⚠️ **ESTADO DEL PROYECTO: VERSIÓN DE REFERENCIA (v1)**
+>
+> Este repositorio representa la implementación inicial en **Node.js/Express**.
+> Actualmente, el proyecto ha evolucionado a una arquitectura empresarial privada (v2.0) desarrollada con **Java & Spring Boot** y desplegada en **Koyeb** para producción.
+>
+> Este código se mantiene público con fines demostrativos de arquitectura, patrones de diseño y manejo de seguridad en entornos JavaScript. **La instancia pública en Render ha sido desactivada por motivos de seguridad.**
+
 API RESTful robusta y escalable para una aplicación de planificación de recetas inteligentes. Diseñada con principios de **seguridad por diseño** y una **arquitectura de capas profesional**, esta API proporciona la base para gestionar usuarios, recetas y la generación de nuevas recetas mediante inteligencia artificial.
 
 ## 📝 Tabla de Contenidos
 
-- [🌐 API en Vivo](#-api-en-vivo)
 - [✨ Características Destacadas](#-características-destacadas)
 - [🧠 Funcionalidad de IA](#-funcionalidad-de-ia)
-- [📚 Documentación de la API](#-documentación-de-la-api)
-- [🏛️ Arquitectura](#-arquitectura)
-- [🛡️ Mitigación de Amenazas (OWASP)](#-mitigación-de-amenazas-owasp)
-- [🚀 Cómo Empezar](#-cómo-empezar)
-- [⚙️ Variables de Entorno](#-variables-de-entorno)
-- [🤝 Contribución](#-contribución)
+- [📚 Documentación](#-documentación-de-la-api)
+- [🏛️ Arquitectura](#️-arquitectura)
+- [🛡️ Mitigación de Amenazas (OWASP)](#️-mitigación-de-amenazas-owasp)
+- [🚀 Cómo Empezar (Local)](#-cómo-empezar)
+- [⚙️ Variables de Entorno](#️-variables-de-entorno)
 - [👤 Autor](#-autor)
 
 ---
 
-## 🌐 **API en Vivo**
+## ✨ Características Destacadas
 
-La API está desplegada en Render y es accesible públicamente.
+* **Arquitectura Profesional:** Implementación estricta del patrón **Controlador-Servicio-Repositorio** para una máxima mantenibilidad y separación de responsabilidades.
+* **Generación de Recetas con IA:** Crea recetas completas a partir de una simple descripción de texto.
+* **Seguridad Robusta:** Autorización a nivel de base de datos (previene IDOR), hashing de contraseñas con **bcrypt** y validación de esquemas estricta con **Zod**.
+* **Transacciones Atómicas:** Las operaciones complejas se ejecutan dentro de transacciones de base de datos para garantizar la integridad de los datos (ACID).
+* **Feed Eficiente:** Paginación por cursor compuesto para un rendimiento óptimo en *infinite scroll*.
 
-**URL Base:** `https://smart-recipe-planner-api.onrender.com/api/v1`
+## 🧠 Funcionalidad de IA
 
----
+### Generación Mágica de Recetas
 
-## ✨ **Características Destacadas**
+La API integra un modelo de IA (Gemini Flash) para generar recetas completas a partir de una simple solicitud de texto del usuario.
 
-*   **Arquitectura Profesional:** Implementación estricta del patrón **Controlador-Servicio-Repositorio** para una máxima mantenibilidad.
-*   **Generación de Recetas con IA:** Crea recetas completas a partir de una simple descripción de texto.
-*   **Seguridad Robusta:** Autorización a nivel de base de datos (previene IDOR), hashing de contraseñas con **bcrypt** y validación de esquemas con **Zod**.
-*   **Transacciones Atómicas:** Las operaciones complejas se ejecutan dentro de transacciones de base de datos para garantizar la integridad de los datos.
-*   **Feed Eficiente:** Paginación por cursor compuesto para un rendimiento óptimo en *infinite scroll*.
+* **Entrada:** Una cadena de texto simple, como *"pasta con pollo para una cena rápida"* o *"un desayuno saludable con avena y frutas"*.
+* **Salida:** Un objeto JSON estructurado que contiene:
+    * `name`: Nombre de la receta.
+    * `description`: Descripción breve.
+    * `preparationTime`: Tiempo de preparación en minutos.
+    * `ingredients`: Lista de ingredientes con nombre, cantidad y unidad.
+    * `instructions`: Pasos de la preparación.
+    * `type`: Tipo de comida (ej. "breakfast", "lunch", "dinner").
+* **Límite de Uso:** Implementación de Rate Limiting lógico (ej. máximo 3 generaciones por día por usuario) para control de costos.
 
----
+## 📚 Documentación de la API
 
-## 🧠 **Funcionalidad de IA**
+La documentación detallada de los endpoints, incluyendo ejemplos de solicitudes y respuestas, se encuentra en el archivo `API_DOCS.md` dentro de este repositorio.
 
-### **Generación Mágica de Recetas**
-
-La API integra un modelo de IA (Gemini Flash) para generar recetas completas a partir de una simple solicitud de texto del usuario. Esta funcionalidad, denominada "Generación Mágica", interpreta el texto y devuelve una receta estructurada.
-
-*   **Entrada:** Una cadena de texto simple, como "pasta con pollo para una cena rápida" o "un desayuno saludable con avena y frutas".
-*   **Salida:** Un objeto JSON que contiene:
-    *   `name`: Nombre de la receta.
-    *   `description`: Descripción breve.
-    *   `preparationTime`: Tiempo de preparación en minutos.
-    *   `ingredients`: Una lista de ingredientes con nombre, cantidad y unidad de medida.
-    *   `instructions`: Pasos de la preparación.
-    *   `type`: Tipo de comida (ej. "breakfast", "lunch", "dinner").
-*   **Límite de Uso:** Para controlar los costos, cada usuario puede realizar un máximo de **3 generaciones de recetas por día**.
-
----
-
-## 📚 **Documentación de la API**
-
-La documentación detallada de los endpoints, incluyendo ejemplos de solicitudes y respuestas, se encuentra en el archivo [**API_DOCS.md**](./API_DOCS.md).
-
----
-
-## 🏛️ **Arquitectura**
+## 🏛️ Arquitectura
 
 El proyecto sigue un diseño de capas claro que aísla la lógica de negocio del framework y del acceso a datos.
 
 1.  **Capa de Rutas (`routes`):** Define los endpoints y encadena los middlewares.
 2.  **Capa de Middlewares (`middlewares`):** Maneja `authentication`, `validateSchema` y `errorHandler`.
-3.  **Capa de Controladores (`controllers`):** Orquesta el flujo HTTP.
-4.  **Capa de Servicios (`services`):** Contiene la lógica de negocio pura.
-5.  **Capa de Repositorios (`repositories`):** Encapsula todas las consultas a la base de datos con Prisma.
+3.  **Capa de Controladores (`controllers`):** Orquesta el flujo HTTP (Request/Response).
+4.  **Capa de Servicios (`services`):** Contiene la lógica de negocio pura y reglas de validación.
+5.  **Capa de Repositorios (`repositories`):** Encapsula todas las consultas a la base de datos con Prisma ORM.
 
----
-
-## 🛡️ **Mitigación de Amenazas (OWASP)**
+## 🛡️ Mitigación de Amenazas (OWASP)
 
 La API ha sido construida con la seguridad como una prioridad:
 
-*   **A01: Broken Access Control:** Prevenido mediante la validación del `user_id` del token JWT en las cláusulas `WHERE`.
-*   **A02: Cryptographic Failures:** Prevenido mediante el hashing de contraseñas con `bcrypt`.
-*   **A03: Injection:** Prevenido por el uso de **Prisma ORM** y la validación estricta de **Zod**.
-*   **A05: Security Misconfiguration:** Los secretos se gestionan a través de variables de entorno.
+* **A01: Broken Access Control:** Prevenido mediante la validación del `user_id` del token JWT en las cláusulas `WHERE` de las consultas.
+* **A02: Cryptographic Failures:** Prevenido mediante el hashing de contraseñas con `bcrypt`.
+* **A03: Injection:** Prevenido por el uso de **Prisma ORM** (que escapa parámetros automáticamente) y la validación de entrada con **Zod**.
+* **A05: Security Misconfiguration:** Los secretos y credenciales se gestionan estrictamente a través de variables de entorno, nunca en el código fuente.
 
----
+## 🚀 Cómo Empezar
 
-## 🚀 **Cómo Empezar**
+Dado que el entorno de producción es privado, sigue estos pasos para levantar un entorno de desarrollo local y probar la lógica.
 
-Sigue estos pasos para levantar un entorno de desarrollo local.
+### Prerrequisitos
+* Node.js (v18 o superior)
+* PNPM
+* PostgreSQL
 
-### **Prerrequisitos**
-
-*   Node.js (v18 o superior)
-*   PNPM
-*   PostgreSQL
-
-### **Instalación**
+### Instalación
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone https://github.com/LuisDavidTF/smart-recipe-planner-api.git
+    git clone [https://github.com/LuisDavidTF/smart-recipe-planner-api.git](https://github.com/LuisDavidTF/smart-recipe-planner-api.git)
     cd smart-recipe-planner-api
     ```
 
@@ -113,13 +101,13 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
     ```
 
 3.  **Configura las variables de entorno:**
-    *   Crea una copia del archivo `.env.example` y renómbralo a `.env`.
-    *   Rellena las variables, especialmente `DATABASE_URL` y `JWT_SECRET`.
+    Crea una copia del archivo `.env.example` y renómbralo a `.env`.
     ```bash
     cp .env.example .env
     ```
 
-4.  **Aplica las migraciones a la base de datos:**
+4.  **Base de Datos:**
+    Asegúrate de tener una instancia de PostgreSQL corriendo y aplica las migraciones:
     ```bash
     pnpm prisma migrate dev
     ```
@@ -128,28 +116,23 @@ Sigue estos pasos para levantar un entorno de desarrollo local.
     ```bash
     pnpm run dev
     ```
-
     La API estará disponible en `http://localhost:3000`.
 
----
+## ⚙️ Variables de Entorno
 
-## ⚙️ **Variables de Entorno**
+Para ejecutar esta aplicación localmente, necesitarás configurar las siguientes variables en tu archivo `.env`:
 
-Para ejecutar esta aplicación, necesitarás configurar las siguientes variables de entorno en un archivo `.env`:
+* `DATABASE_URL`: URL de conexión a tu base de datos PostgreSQL local.
+* `JWT_SECRET`: Clave secreta para firmar los tokens JWT.
+* `PORT`: Puerto del servidor (por defecto: `3000`).
+* `GEMINI_API_KEY`: Clave de API para el servicio de Google Gemini (necesaria para probar la IA).
 
-*   `DATABASE_URL`: URL de conexión a la base de datos PostgreSQL.
-*   `JWT_SECRET`: Clave secreta para firmar los tokens JWT.
-*   `PORT`: Puerto en el que la API escuchará (por defecto: `3000`).
-*   `GEMINI_API_KEY`: Clave de API para el servicio de Google Gemini.
+## 🤝 Contribución
 
----
+Este repositorio está en modo de mantenimiento (Legacy). Sin embargo, las sugerencias sobre la arquitectura o patrones de diseño son bienvenidas a través de Issues.
 
-## 🤝 **Contribución**
+## 👤 Autor
 
-¡Las contribuciones son bienvenidas! Si deseas mejorar este proyecto, por favor, abre un Pull Request para discutir los cambios propuestos.
+**Luis David Trejo** - [GitHub Profile](https://github.com/LuisDavidTF)
 
----
-
-## 👤 **Autor**
-
-**Luis David Tovar** - [GitHub](https://github.com/LuisDavidTF)
+Desarrollador Backend enfocado en arquitecturas escalables y seguridad.
