@@ -91,7 +91,7 @@ Dado que el entorno de producción es privado, sigue estos pasos para levantar u
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone [https://github.com/LuisDavidTF/smart-recipe-planner-api.git](https://github.com/LuisDavidTF/smart-recipe-planner-api.git)
+    git clone https://github.com/LuisDavidTF/smart-recipe-planner-api.git
     cd smart-recipe-planner-api
     ```
 
